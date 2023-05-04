@@ -6,7 +6,7 @@ import jakarta.persistence.*
 class StopComplexEntity (
     @Id
     @Column
-    val id: Int,
+    val id: String,
 
     @Column
     val name: String,
@@ -16,7 +16,7 @@ class StopComplexEntity (
     val locality: LocalityEntity,
 
     @OneToMany(mappedBy = "stopComplex")
-    val stops: Set<StopEntity> = mutableSetOf(),
+    val stops: Set<StopEntity>? = mutableSetOf(),
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

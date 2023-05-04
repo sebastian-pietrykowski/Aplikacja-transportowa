@@ -7,7 +7,7 @@ import jakarta.persistence.*
 class StopEntity(
     @Id
     @Column
-    val id: Int,
+    val id: String,
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "stop_complex_id")
@@ -15,9 +15,6 @@ class StopEntity(
 
     @Column
     val stopType: StopType,
-
-    @Column
-    val direction: String,
 
     @Column
     val xCoordinate: Double,

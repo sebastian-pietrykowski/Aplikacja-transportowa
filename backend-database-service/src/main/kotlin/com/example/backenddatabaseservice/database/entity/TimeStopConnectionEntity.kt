@@ -3,27 +3,27 @@ package com.example.backenddatabaseservice.database.entity
 import jakarta.persistence.*
 import java.time.LocalTime
 
-@Entity @Table(name = "time_departure")
-class TimeDepartureEntity(
+@Entity @Table(name = "time_stop_connection")
+class TimeStopConnectionEntity(
     @Id
     @GeneratedValue
     @Column
-    val id: Int,
+    val id: Long? = null,
 
     @ManyToOne
-    @JoinColumns(
-        JoinColumn(name = "departure_stop_id", referencedColumnName = "departure_stop_id"),
-        JoinColumn(name = "line_number", referencedColumnName = "line_number")
-    )
+    @JoinColumn(name = "stop_connection")
     val stopConnection: StopConnectionEntity,
 
     @Column
-    val departureTime: LocalTime
+    val departureTime: LocalTime,
+
+    @Column
+    val arrivalTime: LocalTime
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null || javaClass != other.javaClass) return false
-        if (other !is TimeDepartureEntity) return false
+        if (other !is TimeStopConnectionEntity) return false
         return other.id == id
     }
 
