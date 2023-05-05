@@ -9,7 +9,7 @@ class StopEntity(
     @Column
     val id: String,
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "stop_complex_id")
     val stopComplex: StopComplexEntity,
 
@@ -22,10 +22,10 @@ class StopEntity(
     @Column
     val yCoordinate: Double,
 
-    @OneToMany(mappedBy = "departureStop", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "departureStop")
     val departureConnections: Set<StopConnectionEntity> = mutableSetOf(),
 
-    @OneToMany(mappedBy = "arrivalStop", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "arrivalStop")
     val arrivalConnections: Set<StopConnectionEntity> = mutableSetOf()
 ) {
     override fun equals(other: Any?): Boolean {

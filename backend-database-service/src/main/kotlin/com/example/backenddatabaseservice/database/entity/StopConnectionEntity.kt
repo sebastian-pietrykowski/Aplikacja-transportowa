@@ -15,7 +15,7 @@ class StopConnectionEntity(
     @Column
     val id: Long?,
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "departure_stop_id")
     val departureStop: StopEntity,
 
@@ -25,9 +25,9 @@ class StopConnectionEntity(
     @Column(name = "direction")
     val direction: String,
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "arrival_stop_id", nullable = true)
-    val arrivalStop: StopEntity?,
+    val arrivalStop: StopEntity,
 
     @Column
     val minTransitTime: LocalTime,

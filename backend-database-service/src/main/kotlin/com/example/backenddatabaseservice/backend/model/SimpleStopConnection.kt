@@ -3,7 +3,7 @@ package com.example.backenddatabaseservice.backend.model
 import com.example.backenddatabaseservice.backend.model.StopConnectionType.*
 
 data class SimpleStopConnection(
-    val lineNumber: Int?, val type: StopConnectionType,
+    val lineNumber: String?, val type: StopConnectionType,
     val realTimeDifference: Int, val timeDifferenceWithPenalty: Int
 ) {
     constructor(type: StopConnectionType, realTimeDifference: Int)
@@ -12,7 +12,7 @@ data class SimpleStopConnection(
         calculateRealTime(realTimeDifference, type)
     )
 
-    constructor(lineNumber: Int?, type: StopConnectionType, realTimeDifference: Int)
+    constructor(lineNumber: String?, type: StopConnectionType, realTimeDifference: Int)
             : this(
         lineNumber, type, realTimeDifference,
         calculateRealTime(realTimeDifference, type)
@@ -21,9 +21,9 @@ data class SimpleStopConnection(
     companion object {
         private fun calculateRealTime(realTimeDifference: Int, type: StopConnectionType): Int {
             return when (type) {
-                INITIAL_LINE -> realTimeDifference
+                NO_CHANGE -> realTimeDifference
                 INITIAL_WAITING -> realTimeDifference
-                SAME_LINE -> realTimeDifference
+                NO_CHANGE -> realTimeDifference
                 CHANGE -> realTimeDifference + Constraints.PENALTY_FOR_CHANGE
             }
         }

@@ -3,13 +3,12 @@ package com.example.backenddatabaseservice
 import com.example.backenddatabaseservice.backend.model.StopType.*
 import com.example.backenddatabaseservice.backend.model.StopWithTime
 import com.example.backenddatabaseservice.backend.service.FromStopConnectionsFinder
-import com.example.backenddatabaseservice.database.entity.*
+import com.example.backenddatabaseservice.backend.service.ShortestPathAlgorithmSpring
 import com.example.backenddatabaseservice.database.repository.*
 import com.example.backenddatabaseservice.database.service.StopConnectionService
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.data.domain.Example
 import java.time.LocalTime
 
 @SpringBootTest
@@ -35,6 +34,10 @@ class BackendDatabaseServiceApplicationTests {
 
     @Autowired
     lateinit var connectionFinder: FromStopConnectionsFinder
+
+    @Autowired
+    lateinit var shortestPathAlgorithmSpring: ShortestPathAlgorithmSpring
+
     @Test
     fun contextLoads() {
         assert(true)
@@ -131,11 +134,13 @@ class BackendDatabaseServiceApplicationTests {
         //stopConnectionRepository.findByDepartureStopId("000101")
 
         val startStopWithTime = StopWithTime("000101", "0001", LocalTime.of(0,0), BUS)
-        val connections = connectionFinder.find(startStopWithTime)
-        println("\n------------")
-        println(connections.size)
-        connections.forEach { c -> println(c.arrivalStopWithTime.stopId) }
-        println("------------")
-        //assert(true)
+//        val connections = connectionFinder.find(startStopWithTime, true, null)
+//        println("\n------------")
+//        println(connections.size)
+//        println(connections)
+//        connections.forEach { c -> println(c.arrivalStopWithTime.stopId) }
+//        println("------------")
+//        //assert(true)
+        shortestPathAlgorithmSpring.find(startStopWithTime, "0005")
     }
 }

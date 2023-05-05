@@ -11,7 +11,7 @@ class LocalityEntity(
     @Column
     val name: String,
 
-    @OneToMany(mappedBy = "locality", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "locality")
     val stopComplexes: Set<StopComplexEntity>? = mutableSetOf()
 ) {
     override fun equals(other: Any?): Boolean {

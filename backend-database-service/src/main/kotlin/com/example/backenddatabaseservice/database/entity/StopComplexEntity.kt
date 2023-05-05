@@ -11,11 +11,11 @@ class StopComplexEntity (
     @Column
     val name: String,
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "locality_id")
     val locality: LocalityEntity,
 
-    @OneToMany(mappedBy = "stopComplex", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "stopComplex")
     val stops: Set<StopEntity>? = mutableSetOf(),
 ) {
     override fun equals(other: Any?): Boolean {

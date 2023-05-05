@@ -19,7 +19,7 @@ class ShortestPathAlgorithm(
     private val queue = PriorityQueue<Pair<StopWithTime, Int>>(
         n, compareBy({ it.second }, { it.first.departureTime })
     ) // arrivalStop, timeDifferenceWithPenalty
-    private val minTimeStopsContainer = MinTimeStopsContainer() // only for stops with destinationId
+    private var minTimeDestinationStopsContainer: MinTimeDestinationStopsContainer? = null // only for stops with destinationId
     private val path = mutableListOf<StopConnectionWithArrival>()
 
 //    private val connectionsFinder = FromStopConnectionsFinder()
@@ -41,7 +41,7 @@ class ShortestPathAlgorithm(
                         actualStop, it.simpleConnection
                     )
                     if (adjustedStop.complexId == destinationComplexId)
-                        minTimeStopsContainer.add(it.consideredStopWithTime, newCost)
+                        minTimeDestinationStopsContainer?.add(it.consideredStopWithTime, newCost)
                 }
             }
         }
@@ -59,14 +59,15 @@ class ShortestPathAlgorithm(
         }
         path.reverse()
     }
-    private fun findNearestDestinationStop(destinationComplexId: String, stopsInComplex: List<String>) : StopWithTime? {
-        return minTimeStopsContainer.find(stopsInComplex)
+    private fun findNearestDestinationStop() : StopWithTime? {
+        return minTimeDestinationStopsContainer?.getMin()
     }
 
 
     fun find(destinationComplexId: String): List<StopConnectionWithArrival> {
+        minTimeDestinationStopsContainer = MinTimeDestinationStopsContainer(destinationComplexId)
         findShortestConnections(destinationComplexId)
-        val destinationStop = findNearestDestinationStop(destinationComplexId, listOf("5.1"))
+        val destinationStop = findNearestDestinationStop()
         findPath(destinationStop!!)
 
         println("Final destination: $destinationStop")
