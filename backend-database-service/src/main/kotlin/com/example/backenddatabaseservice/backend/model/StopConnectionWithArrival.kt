@@ -1,5 +1,5 @@
 package com.example.backenddatabaseservice.backend.model
 
 data class StopConnectionWithArrival(
-    val arrivalStop: Stop, override val simpleConnection: SimpleStopConnection?
-) : StopConnection(arrivalStop, simpleConnection)
+    val arrivalStopWithTime: StopWithTime, override val simpleConnection: SimpleStopConnection?
+) : StopConnection(arrivalStopWithTime, simpleConnection)

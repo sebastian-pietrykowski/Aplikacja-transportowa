@@ -1,21 +1,21 @@
 package com.example.backenddatabaseservice.backend.model
 
-import com.example.backenddatabaseservice.backend.model.Stop
-
 class MinTimeStopsContainer {
 
-    private val minTimeForStops = HashMap<Int, Pair<Stop, Int>>()
-    // locationId -> (stop with min departureTime, totalTimeWithPenalty)
+    private val minTimeForStops = HashMap<String, Pair<StopWithTime, Int>>()
+    // stopId -> (stop with min departureTime, totalTimeWithPenalty)
 
-    fun add(stop: Stop, totalTimeWithPenalty: Int) {
-        minTimeForStops.merge(stop.locationId, Pair(stop, totalTimeWithPenalty))
+    fun add(stopWithTime: StopWithTime, totalTimeWithPenalty: Int) {
+        minTimeForStops.merge(stopWithTime.stopId, Pair(stopWithTime, totalTimeWithPenalty))
         { oldPair, newPair ->
             if (oldPair.second <= newPair.second)
                 oldPair else newPair
         }
     }
 
-    fun find(locationId: Int): Stop? {
-        return minTimeForStops[locationId]?.first
+    fun find(stopsInComplex: List<String>): StopWithTime? {
+        //return minTimeForStops[complexId]?.first
+        return stopsInComplex.mapNotNull { stopId -> minTimeForStops[stopId] }
+            .minByOrNull { it.second }?.first
     }
 }

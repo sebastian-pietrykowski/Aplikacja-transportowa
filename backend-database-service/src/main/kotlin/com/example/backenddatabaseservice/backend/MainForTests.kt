@@ -1,7 +1,7 @@
 package com.example.backenddatabaseservice.backend
 
 import com.example.backenddatabaseservice.backend.model.SimpleStopConnection
-import com.example.backenddatabaseservice.backend.model.Stop
+import com.example.backenddatabaseservice.backend.model.StopWithTime
 import com.example.backenddatabaseservice.backend.model.StopConnectionType.*
 import com.example.backenddatabaseservice.backend.model.StopConnectionWithArrival
 import com.example.backenddatabaseservice.backend.model.StopType.*
@@ -12,42 +12,42 @@ import java.time.LocalTime
 
 class MainForTests
 
-fun listOfStops1(nr: Int): Stop {
+fun listOfStops1(nr: Int): StopWithTime {
     return when (nr) {
-        0 -> Stop(1, LocalTime.of(0, 0), BUS)
-        1 -> Stop(2, LocalTime.of(0, 1), BUS)
-        2 -> Stop(2, LocalTime.of(0, 2), BUS)
-        3 -> Stop(6, LocalTime.of(0, 3), BUS)
-        4 -> Stop(3, LocalTime.of(0, 2), BUS)
-        5 -> Stop(4, LocalTime.of(0, 3), BUS)
-        6 -> Stop(3, LocalTime.of(0, 3), BUS)
-        7 -> Stop(5, LocalTime.of(0, 4), BUS)
-        else -> Stop(-100, LocalTime.of(0, 0), BUS)
+        0 -> StopWithTime("1.1", "1", LocalTime.of(0, 0), BUS)
+        1 -> StopWithTime("2.1", "2", LocalTime.of(0, 1), BUS)
+        2 -> StopWithTime("2.1", "2", LocalTime.of(0, 2), BUS)
+        3 -> StopWithTime("6.1", "6", LocalTime.of(0, 3), BUS)
+        4 -> StopWithTime("3.1", "3", LocalTime.of(0, 2), BUS)
+        5 -> StopWithTime("4.1", "4", LocalTime.of(0, 3), BUS)
+        6 -> StopWithTime("3.1", "3", LocalTime.of(0, 3), BUS)
+        7 -> StopWithTime("5.1", "5", LocalTime.of(0, 4), BUS)
+        else -> StopWithTime("-100.1", "-100", LocalTime.of(0, 0), BUS)
     }
 }
 
-fun listOfStopsCase2(nr: Int): Stop {
+fun listOfStopsCase2(nr: Int): StopWithTime {
     return when (nr) {
-        0 -> Stop(1, LocalTime.of(0, 0), BUS)
-        1 -> Stop(2, LocalTime.of(0, 2), BUS)
-        2 -> Stop(2, LocalTime.of(0, 5), BUS)
-        3 -> Stop(3, LocalTime.of(0, 6), BUS)
-        4 -> Stop(2, LocalTime.of(0,4), BUS)
-        else -> Stop(-100, LocalTime.of(0, 0), BUS)
+        0 -> StopWithTime("1.1", "1", LocalTime.of(0, 0), BUS)
+        1 -> StopWithTime("2.1", "2", LocalTime.of(0, 2), BUS)
+        2 -> StopWithTime("2.1", "2", LocalTime.of(0, 5), BUS)
+        3 -> StopWithTime("3.1", "3", LocalTime.of(0, 6), BUS)
+        4 -> StopWithTime("2.1", "2", LocalTime.of(0,4), BUS)
+        else -> StopWithTime("-100.1", "100", LocalTime.of(0, 0), BUS)
     }
 }
 
-fun listOfStopsCase3(nr: Int): Stop {
+fun listOfStopsCase3(nr: Int): StopWithTime {
     return when (nr) {
-        0 -> Stop(1, LocalTime.of(0, 0), BUS)
-        1 -> Stop(3, LocalTime.of(0, 2), BUS)
-        2 -> Stop(3, LocalTime.of(0, 3), BUS)
-        3 -> Stop(4, LocalTime.of(0, 5), BUS)
-        4 -> Stop(4, LocalTime.of(0,6), BUS)
-        5 -> Stop(5, LocalTime.of(0,7), BUS)
-        6 -> Stop(2, LocalTime.of(0,4), BUS)
-        7 -> Stop(5, LocalTime.of(0,9), BUS)
-        else -> Stop(-100, LocalTime.of(0, 0), BUS)
+        0 -> StopWithTime("1.1", "1", LocalTime.of(0, 0), BUS)
+        1 -> StopWithTime("3.1", "3", LocalTime.of(0, 2), BUS)
+        2 -> StopWithTime("3.1", "3", LocalTime.of(0, 3), BUS)
+        3 -> StopWithTime("4.1", "4", LocalTime.of(0, 5), BUS)
+        4 -> StopWithTime("4.1", "4", LocalTime.of(0,6), BUS)
+        5 -> StopWithTime("5.1", "5", LocalTime.of(0,7), BUS)
+        6 -> StopWithTime("2.1", "2", LocalTime.of(0,4), BUS)
+        7 -> StopWithTime("5.1", "5", LocalTime.of(0,9), BUS)
+        else -> StopWithTime("-100.1", "-100", LocalTime.of(0, 0), BUS)
     }
 }
 
@@ -229,7 +229,7 @@ fun main() {
 
     ShortestPathAlgorithm(
         connections, listOfStopsCase3(0)
-    ).find(5)
+    ).find("5")
     //result.forEach { (k, v) -> println("$k = $v") }
 //    ChronoUnit.MINUTES.between()
     //val a1 = LocalTime.of(10,55).until(LocalTime.of(10,50), ChronoUnit.MINUTES)

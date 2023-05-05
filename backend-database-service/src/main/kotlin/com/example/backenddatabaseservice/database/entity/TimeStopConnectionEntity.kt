@@ -10,7 +10,7 @@ class TimeStopConnectionEntity(
     @Column
     val id: Long? = null,
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "stop_connection")
     val stopConnection: StopConnectionEntity,
 

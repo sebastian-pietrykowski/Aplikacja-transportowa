@@ -15,7 +15,7 @@ class StopConnectionEntity(
     @Column
     val id: Long?,
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "departure_stop_id")
     val departureStop: StopEntity,
 
@@ -25,7 +25,7 @@ class StopConnectionEntity(
     @Column(name = "direction")
     val direction: String,
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "arrival_stop_id", nullable = true)
     val arrivalStop: StopEntity?,
 
@@ -35,7 +35,7 @@ class StopConnectionEntity(
     @Column
     val maxTransitTime: LocalTime,
 
-    @OneToMany(mappedBy = "stopConnection")
+    @OneToMany(mappedBy = "stopConnection", fetch = FetchType.EAGER)
     val timeStopConnections: Set<TimeStopConnectionEntity>? = mutableSetOf()
 ) {
     override fun equals(other: Any?): Boolean {

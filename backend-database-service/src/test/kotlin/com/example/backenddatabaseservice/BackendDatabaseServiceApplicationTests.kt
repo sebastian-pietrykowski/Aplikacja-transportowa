@@ -1,8 +1,11 @@
 package com.example.backenddatabaseservice
 
 import com.example.backenddatabaseservice.backend.model.StopType.*
+import com.example.backenddatabaseservice.backend.model.StopWithTime
+import com.example.backenddatabaseservice.backend.service.FromStopConnectionsFinder
 import com.example.backenddatabaseservice.database.entity.*
 import com.example.backenddatabaseservice.database.repository.*
+import com.example.backenddatabaseservice.database.service.StopConnectionService
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -27,11 +30,16 @@ class BackendDatabaseServiceApplicationTests {
     @Autowired
     lateinit var timeStopConnectionRepository: TimeStopConnectionRepository
 
+    @Autowired
+    lateinit var stopConnectionService: StopConnectionService
+
+    @Autowired
+    lateinit var connectionFinder: FromStopConnectionsFinder
     @Test
     fun contextLoads() {
         assert(true)
     }
-
+/*
     @Test
     fun testRepository() {
         val locality1 = LocalityEntity("WA", "Warszawa", null)
@@ -114,5 +122,20 @@ class BackendDatabaseServiceApplicationTests {
 
         assert(true)
     }
+*/
 
+    @Test
+    fun test1() {
+        //assert (stopConnectionService.findByDepartureStopId("000101").isNotEmpty())
+        //assert(stopConnectionRepository.findByDepartureStopId("000101").isNotEmpty())
+        //stopConnectionRepository.findByDepartureStopId("000101")
+
+        val startStopWithTime = StopWithTime("000101", "0001", LocalTime.of(0,0), BUS)
+        val connections = connectionFinder.find(startStopWithTime)
+        println("\n------------")
+        println(connections.size)
+        connections.forEach { c -> println(c.arrivalStopWithTime.stopId) }
+        println("------------")
+        //assert(true)
+    }
 }

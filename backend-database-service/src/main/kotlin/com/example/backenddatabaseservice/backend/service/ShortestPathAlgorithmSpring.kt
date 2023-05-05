@@ -1,39 +1,45 @@
 package com.example.backenddatabaseservice.backend.service
 
 import com.example.backenddatabaseservice.backend.model.*
+import com.example.backenddatabaseservice.database.service.StopComplexService
+import com.example.backenddatabaseservice.database.service.StopService
+import com.example.backenddatabaseservice.database.service.TimeStopConnectionService
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Service
 import java.util.PriorityQueue
 import kotlin.collections.HashMap
 import kotlin.collections.HashSet
 
-class ShortestPathAlgorithm(
-    private val connections: Map<StopWithTime, List<StopConnectionWithArrival>>, private val sourceStopWithTime: StopWithTime
+@Service
+class ShortestPathAlgorithmSpring(
+    private val stopComplexService: StopComplexService,
+    private val timeStopConnectionService: TimeStopConnectionService,
+    private val connectionsFinder: FromStopConnectionsFinder
+
+    //private val connections: Map<Stop, List<StopConnectionWithArrival>>,
+
 ) {
-    private val n = connections.size
-    private val visited = HashSet<StopWithTime>(n)
-    private val predecessors = HashMap<StopWithTime, StopConnectionWithDeparture?>(n).apply {
-        connections.forEach { put(it.key, null) }
-    } // arrivalStop, connectionToIt
-    private val totalTimeWithPenalty = HashMap<StopWithTime, Int>(n).apply {
-        connections.forEach { put(it.key, Int.MAX_VALUE) }
-    } // arrivalStop, totalTimeToIt
+    //    private val n: Int = timeStopConnectionService.getLength().toInt()
+    private val visited = HashSet<StopWithTime>()
+    private val predecessors = HashMap<StopWithTime, StopConnectionWithDeparture?>() // arrivalStop, connectionToIt
+    private val totalTimeWithPenalty = HashMap<StopWithTime, Int>() // arrivalStop, totalTimeToIt
     private val queue = PriorityQueue<Pair<StopWithTime, Int>>(
-        n, compareBy({ it.second }, { it.first.departureTime })
+        compareBy({ it.second }, { it.first.departureTime })
     ) // arrivalStop, timeDifferenceWithPenalty
     private val minTimeStopsContainer = MinTimeStopsContainer() // only for stops with destinationId
     private val path = mutableListOf<StopConnectionWithArrival>()
 
-//    private val connectionsFinder = FromStopConnectionsFinder()
 
-    private fun findShortestConnections(destinationComplexId: String) {
+    private fun findShortestConnections(sourceStopWithTime: StopWithTime, destinationComplexId: String) {
         queue.add(sourceStopWithTime to 0)
         totalTimeWithPenalty[sourceStopWithTime] = 0
         while (queue.isNotEmpty()) {
             val (actualStop, actualCost) = queue.poll()
             visited.add(actualStop)
-            //connectionsFinder.find(actualStop)
-            connections[actualStop]?.forEach {
+            connectionsFinder.find(actualStop)?.forEach {
                 val adjustedStop = it.consideredStopWithTime
                 val newCost = actualCost + it.simpleConnection!!.timeDifferenceWithPenalty
+                totalTimeWithPenalty?.get(adjustedStop) ?: totalTimeWithPenalty.set(adjustedStop, Int.MAX_VALUE)
                 if (totalTimeWithPenalty[adjustedStop]!! > newCost) {
                     totalTimeWithPenalty[adjustedStop] = newCost
                     queue.offer(adjustedStop to newCost)
@@ -59,14 +65,17 @@ class ShortestPathAlgorithm(
         }
         path.reverse()
     }
-    private fun findNearestDestinationStop(destinationComplexId: String, stopsInComplex: List<String>) : StopWithTime? {
+
+    private fun findNearestDestinationStop(stopsInComplex: List<String>): StopWithTime? {
         return minTimeStopsContainer.find(stopsInComplex)
     }
 
 
-    fun find(destinationComplexId: String): List<StopConnectionWithArrival> {
-        findShortestConnections(destinationComplexId)
-        val destinationStop = findNearestDestinationStop(destinationComplexId, listOf("5.1"))
+    fun find(sourceStopWithTime: StopWithTime, destinationComplexId: String): List<StopConnectionWithArrival> {
+        findShortestConnections(sourceStopWithTime, destinationComplexId)
+        val possibleDestinations = stopComplexService.findStopsByComplexId(destinationComplexId)
+            .mapNotNull { d -> d.id }
+        val destinationStop = findNearestDestinationStop(possibleDestinations)
         findPath(destinationStop!!)
 
         println("Final destination: $destinationStop")

@@ -14,4 +14,11 @@ interface StopConnectionRepository : JpaRepository<StopConnectionEntity?, Long?>
     fun findFirstByDepartureStopAndLineNumberAndDirectionAndArrivalStop(
         @Param("entity") entity: StopConnectionEntity
     ): StopConnectionEntity?
+
+//    fun findByDepartureStop(departureStopId: String) : List<StopConnectionEntity>
+
+    @Query("SELECT c from StopConnectionEntity c where c.departureStop.id = :departureStopId")
+    fun findByDepartureStopId(departureStopId: String): List<StopConnectionEntity>
+
+
 }
