@@ -6,11 +6,13 @@ import com.example.backenddatabaseservice.database.service.StopConnectionService
 import com.example.backenddatabaseservice.backend.model.StopConnectionType.*
 import com.example.backenddatabaseservice.database.entity.StopEntity
 import com.example.backenddatabaseservice.database.entity.TimeStopConnectionEntity
+import com.example.backenddatabaseservice.database.service.StopComplexService
 import org.springframework.stereotype.Service
 
 @Service
 class FromStopConnectionsFinder(
-    private val stopConnectionService: StopConnectionService
+    private val stopConnectionService: StopConnectionService,
+    private val stopComplexService: StopComplexService
 ) {
     fun find(currentStopWithTime: StopWithTime, isStart: Boolean, lastLineNumber: String?)
             : List<StopConnectionWithArrival> {
@@ -19,7 +21,9 @@ class FromStopConnectionsFinder(
             .findByDepartureStopId(currentStopWithTime.stopId)
 
         for (connectionEntity in connectionsEntities) {
-            val timeConnectionEntities = stopConnectionService.findTimeStopConnections(connectionEntity.id!!)
+            val timeConnectionEntities = stopConnectionService.findTimeStopConnectionsBeginningFrom(
+                connectionEntity.id!!, currentStopWithTime.departureTime
+            )
             for (timeConnectionEntity in timeConnectionEntities) {
                 val departureStopEntity = connectionEntity.departureStop
                 val arrivalStopEntity = connectionEntity.arrivalStop
@@ -33,12 +37,36 @@ class FromStopConnectionsFinder(
                         connectionEntity, stopConnectionType
                     )
                     false -> createChangeOrInitialWaitingStopConnectionWithArrival(
-                        currentStopWithTime, timeConnectionEntity, stopConnectionType
+                        currentStopWithTime, departureStopEntity, timeConnectionEntity, stopConnectionType
                     )
                 }
                 result.add(connection)
             }
         }
+
+        val neighborStopsEntities = stopComplexService.findStopsByComplexId(currentStopWithTime.complexId)
+        for(neighborStopEntity in neighborStopsEntities) {
+            val neighborConnectionsEntities = stopConnectionService.findByDepartureStopId(neighborStopEntity.id)
+            for (neighborConnectionEntity in neighborConnectionsEntities) {
+                val neighborTimeConnectionsEntities = stopConnectionService
+                    .findTimeStopConnectionsBeginningFrom(
+                        neighborConnectionEntity.id!!, currentStopWithTime.departureTime
+                    )
+                for (neighborTimeConnectionEntity in neighborTimeConnectionsEntities) {
+                    val neighborDepartureStopEntity = neighborConnectionEntity.departureStop
+                    val neighborStopConnectionType = determineStopConnectionType(
+                        lastLineNumber, neighborConnectionEntity, isStart
+                    )
+                    val neighborConnection = createChangeOrInitialWaitingStopConnectionWithArrival(
+                        currentStopWithTime, neighborDepartureStopEntity, neighborTimeConnectionEntity,
+                        neighborStopConnectionType
+                    )
+                    result.add(neighborConnection)
+                }
+            }
+
+        }
+
         return result
     }
 
@@ -81,7 +109,7 @@ class FromStopConnectionsFinder(
     }
 
     private fun createChangeOrInitialWaitingStopConnectionWithArrival(
-        departureStopWithTime: StopWithTime,
+        departureStopWithTime: StopWithTime, departureStopEntity: StopEntity,
         timeConnectionEntity: TimeStopConnectionEntity,
         stopConnectionType: StopConnectionType
     ): StopConnectionWithArrival {
@@ -90,8 +118,8 @@ class FromStopConnectionsFinder(
             departureStopWithTime.departureTime, departureStopWithTime.stopType
         )
         val arrivalStop = StopWithTime(
-            departureStopWithTime.stopId, departureStopWithTime.complexId,
-            timeConnectionEntity.departureTime, departureStopWithTime.stopType
+            departureStopEntity.id, departureStopEntity.stopComplex.id,
+            timeConnectionEntity.departureTime, departureStopEntity.stopType
         )
         return StopConnectionWithArrival(
             arrivalStop,

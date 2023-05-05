@@ -15,7 +15,7 @@ class StopComplexEntity (
     @JoinColumn(name = "locality_id")
     val locality: LocalityEntity,
 
-    @OneToMany(mappedBy = "stopComplex")
+    @OneToMany(mappedBy = "stopComplex", fetch = FetchType.EAGER)
     val stops: Set<StopEntity>? = mutableSetOf(),
 ) {
     override fun equals(other: Any?): Boolean {

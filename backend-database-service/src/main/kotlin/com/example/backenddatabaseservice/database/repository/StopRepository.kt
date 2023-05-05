@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface StopRepository : JpaRepository<StopEntity?, String?> {
+
 //    @Query("SELECT s from StopEntity s where s.stopComplex.id = :complexId")
 //    fun findStopsByComplexId(complexId: String): List<StopEntity>
 }

@@ -2,6 +2,7 @@ package com.example.backenddatabaseservice.backend.model
 
 class Constraints {
     companion object {
-        const val PENALTY_FOR_CHANGE = 5
+        const val PENALTY_FOR_CHANGE_IN_MINUTES = 5
+        const val MAX_ACCEPTABLE_TIME_WITH_PENALTY_IN_MINUTES = 30
     }
 }

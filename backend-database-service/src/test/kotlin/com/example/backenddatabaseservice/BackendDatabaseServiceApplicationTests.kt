@@ -4,6 +4,7 @@ import com.example.backenddatabaseservice.backend.model.StopType.*
 import com.example.backenddatabaseservice.backend.model.StopWithTime
 import com.example.backenddatabaseservice.backend.service.FromStopConnectionsFinder
 import com.example.backenddatabaseservice.backend.service.ShortestPathAlgorithmSpring
+import com.example.backenddatabaseservice.database.entity.*
 import com.example.backenddatabaseservice.database.repository.*
 import com.example.backenddatabaseservice.database.service.StopConnectionService
 import org.junit.jupiter.api.Test
@@ -42,6 +43,7 @@ class BackendDatabaseServiceApplicationTests {
     fun contextLoads() {
         assert(true)
     }
+
 /*
     @Test
     fun testRepository() {
@@ -63,15 +65,17 @@ class BackendDatabaseServiceApplicationTests {
         stopRepository.save(stop1)
         val stop2 = StopEntity("000201", stopComplex2, BUS, 0.0, 0.0)
         stopRepository.save(stop2)
-        val stop3 = StopEntity("000301", stopComplex3, BUS, 0.0, 0.0)
-        stopRepository.save(stop3)
+        val stop3_1 = StopEntity("000301", stopComplex3, BUS, 0.0, 0.0)
+        stopRepository.save(stop3_1)
+        val stop3_2 = StopEntity("000302", stopComplex3, BUS, 0.0, 0.0)
+        stopRepository.save(stop3_2)
         val stop4 = StopEntity("000401", stopComplex4, BUS, 0.0, 0.0)
         stopRepository.save(stop4)
         val stop5 = StopEntity("000501", stopComplex5, BUS, 0.0, 0.0)
         stopRepository.save(stop5)
 
         val stopConnection1 = StopConnectionEntity(
-            null, stop1, "1", "-", stop3,
+            null, stop1, "1", "-", stop3_1,
             LocalTime.of(0, 1), LocalTime.of(0, 1), null
         )
         stopConnectionRepository.save(stopConnection1)
@@ -86,7 +90,7 @@ class BackendDatabaseServiceApplicationTests {
         )
         stopConnectionRepository.save(stopConnection3)
         val stopConnection4 = StopConnectionEntity(
-            null, stop3, "2", "-", stop4,
+            null, stop3_2, "2", "-", stop4,
             LocalTime.of(0, 1), LocalTime.of(0, 1), null
         )
         stopConnectionRepository.save(stopConnection4)
@@ -143,4 +147,5 @@ class BackendDatabaseServiceApplicationTests {
 //        //assert(true)
         shortestPathAlgorithmSpring.find(startStopWithTime, "0005")
     }
+
 }

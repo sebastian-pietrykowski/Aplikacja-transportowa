@@ -1,8 +1,6 @@
 package com.example.backenddatabaseservice.backend.service
 
 import com.example.backenddatabaseservice.backend.model.*
-import com.example.backenddatabaseservice.database.service.StopComplexService
-import com.example.backenddatabaseservice.database.service.TimeStopConnectionService
 import org.springframework.stereotype.Service
 import java.util.PriorityQueue
 import kotlin.collections.HashMap
@@ -37,22 +35,22 @@ class ShortestPathAlgorithmSpring(
             val (actualStop, actualCost) = queue.poll()
             visited.add(actualStop)
             val isStart = predecessors[actualStop] == null
-            val lastLineNumber = predecessors[actualStop]?.simpleConnection?.lineNumber ?: null
+            val lastLineNumber = predecessors[actualStop]?.simpleConnection?.lineNumber
             val connections = connectionsFinder.find(actualStop, isStart, lastLineNumber)
             for (it in connections) {
                 val adjustedStop = it.consideredStopWithTime
                 val newCost = actualCost + it.simpleConnection!!.timeDifferenceWithPenalty
-                totalTimeWithPenalty?.get(adjustedStop) ?: totalTimeWithPenalty.set(adjustedStop, Int.MAX_VALUE)
-                if (totalTimeWithPenalty[adjustedStop]!! > newCost) {
+                totalTimeWithPenalty[adjustedStop] = totalTimeWithPenalty[adjustedStop] ?: Int.MAX_VALUE
+                val conditionForBetterStop = newCost < totalTimeWithPenalty[adjustedStop]!!
+                        && newCost < Constraints.MAX_ACCEPTABLE_TIME_WITH_PENALTY_IN_MINUTES
+                if (conditionForBetterStop) {
                     totalTimeWithPenalty[adjustedStop] = newCost
                     queue.offer(adjustedStop to newCost)
                     predecessors[adjustedStop] = StopConnectionWithDeparture(
                         actualStop, it.simpleConnection
                     )
-                    if (adjustedStop.complexId == destinationComplexId) {
+                    if (adjustedStop.complexId == destinationComplexId)
                         minTimeDestinationStopsContainer?.add(it.consideredStopWithTime, newCost)
-                        print("a")
-                    }
                 }
             }
         }

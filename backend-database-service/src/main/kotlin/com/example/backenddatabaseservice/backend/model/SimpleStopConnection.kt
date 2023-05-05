@@ -24,7 +24,7 @@ data class SimpleStopConnection(
                 NO_CHANGE -> realTimeDifference
                 INITIAL_WAITING -> realTimeDifference
                 NO_CHANGE -> realTimeDifference
-                CHANGE -> realTimeDifference + Constraints.PENALTY_FOR_CHANGE
+                CHANGE -> realTimeDifference + Constraints.PENALTY_FOR_CHANGE_IN_MINUTES
             }
         }
     }

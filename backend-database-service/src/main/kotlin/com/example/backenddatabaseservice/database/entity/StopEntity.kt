@@ -22,7 +22,7 @@ class StopEntity(
     @Column
     val yCoordinate: Double,
 
-    @OneToMany(mappedBy = "departureStop")
+    @OneToMany(mappedBy = "departureStop", fetch = FetchType.LAZY)
     val departureConnections: Set<StopConnectionEntity> = mutableSetOf(),
 
     @OneToMany(mappedBy = "arrivalStop")
