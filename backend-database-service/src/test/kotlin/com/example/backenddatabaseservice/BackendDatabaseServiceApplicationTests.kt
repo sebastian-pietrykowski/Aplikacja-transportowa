@@ -61,6 +61,9 @@ class BackendDatabaseServiceApplicationTests {
         val stopComplex5 = StopComplexEntity("0005", "Five", locality1, null)
         stopComplexRepository.save(stopComplex5)
 
+        val stopComplexTmp = StopComplexEntity("0006", "Tmp", locality1, null)
+        stopComplexRepository.save(stopComplexTmp)
+
         val stop1 = StopEntity("000101", stopComplex1, BUS, 0.0, 0.0)
         stopRepository.save(stop1)
         val stop2 = StopEntity("000201", stopComplex2, BUS, 0.0, 0.0)
@@ -73,6 +76,9 @@ class BackendDatabaseServiceApplicationTests {
         stopRepository.save(stop4)
         val stop5 = StopEntity("000501", stopComplex5, BUS, 0.0, 0.0)
         stopRepository.save(stop5)
+
+        val stopTmp = StopEntity("000601", stopComplexTmp, BUS, 0.0, 0.0)
+        stopRepository.save(stopTmp)
 
         val stopConnection1 = StopConnectionEntity(
             null, stop1, "1", "-", stop3_1,
@@ -100,6 +106,12 @@ class BackendDatabaseServiceApplicationTests {
         )
         stopConnectionRepository.save(stopConnection5)
 
+        val stopConnectionTmp = StopConnectionEntity(
+            null, stop3_2, "10", "-", stopTmp,
+            LocalTime.of(0, 1), LocalTime.of(0, 1), null
+        )
+        stopConnectionRepository.save(stopConnectionTmp)
+
         val time1 = TimeStopConnectionEntity(
             null, stopConnection1,
             LocalTime.of(0, 0), LocalTime.of(0, 2)
@@ -125,6 +137,12 @@ class BackendDatabaseServiceApplicationTests {
             LocalTime.of(0, 6), LocalTime.of(0, 7)
         )
         timeStopConnectionRepository.save(time5)
+
+        val timeTmp = TimeStopConnectionEntity(
+            null, stopConnectionTmp,
+            LocalTime.of(0, 2), LocalTime.of(0, 3)
+        )
+        timeStopConnectionRepository.save(timeTmp)
 
 
         assert(true)

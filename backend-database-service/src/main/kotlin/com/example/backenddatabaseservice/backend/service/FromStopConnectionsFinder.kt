@@ -17,69 +17,70 @@ class FromStopConnectionsFinder(
     fun find(currentStopWithTime: StopWithTime, isStart: Boolean, lastLineNumber: String?)
             : List<StopConnectionWithArrival> {
         val result = mutableListOf<StopConnectionWithArrival>()
+
+        // add connections incoming from the current stop
         val connectionsEntities: List<StopConnectionEntity> = stopConnectionService
             .findByDepartureStopId(currentStopWithTime.stopId)
+        addTimeConnections(connectionsEntities, result, currentStopWithTime, lastLineNumber, isStart)
 
+        // add connections incoming from stops in the same complex as the current stop
+        val neighborStopsEntities = stopComplexService.findStopsByComplexId(currentStopWithTime.complexId)
+        for (neighborStopEntity in neighborStopsEntities) {
+            val neighborConnectionsEntities = stopConnectionService.findByDepartureStopId(neighborStopEntity.id)
+            addTimeConnections(neighborConnectionsEntities, result, currentStopWithTime, lastLineNumber, isStart)
+        }
+
+        return result
+    }
+
+    private fun addTimeConnections(
+        connectionsEntities: List<StopConnectionEntity>, result: MutableList<StopConnectionWithArrival>,
+        departureStopWithTime: StopWithTime, lastLineNumber: String?, isStart: Boolean
+    ) {
         for (connectionEntity in connectionsEntities) {
+            val minTimeToSearch = when (
+                (departureStopWithTime.stopId == connectionEntity.departureStop.id)
+            ) {
+                true -> departureStopWithTime.departureTime
+                false -> departureStopWithTime.departureTime.plusMinutes(
+                    Constraints.MIN_TIME_FOR_CHANGE_IN_MINUTES.toLong()
+                )
+            }
             val timeConnectionEntities = stopConnectionService.findTimeStopConnectionsBeginningFrom(
-                connectionEntity.id!!, currentStopWithTime.departureTime
+                connectionEntity.id!!, minTimeToSearch
             )
             for (timeConnectionEntity in timeConnectionEntities) {
                 val departureStopEntity = connectionEntity.departureStop
                 val arrivalStopEntity = connectionEntity.arrivalStop
 
                 val stopConnectionType = determineStopConnectionType(lastLineNumber, connectionEntity, isStart)
-                val connectionCondition = currentStopWithTime.departureTime == timeConnectionEntity.departureTime
-                        && currentStopWithTime.direction == connectionEntity.direction
+                val connectionCondition = departureStopWithTime.departureTime == timeConnectionEntity.departureTime
+                        && departureStopWithTime.direction == connectionEntity.direction
+                        && (lastLineNumber == null || lastLineNumber == connectionEntity.lineNumber)
                 val connection = when (connectionCondition) {
                     true -> createNormalStopConnectionWithArrival(
                         departureStopEntity, arrivalStopEntity, timeConnectionEntity,
                         connectionEntity, stopConnectionType
                     )
                     false -> createChangeOrInitialWaitingStopConnectionWithArrival(
-                        currentStopWithTime, departureStopEntity, timeConnectionEntity, stopConnectionType
+                        departureStopWithTime, departureStopEntity, timeConnectionEntity, stopConnectionType
                     )
                 }
                 result.add(connection)
             }
         }
-
-        val neighborStopsEntities = stopComplexService.findStopsByComplexId(currentStopWithTime.complexId)
-        for(neighborStopEntity in neighborStopsEntities) {
-            val neighborConnectionsEntities = stopConnectionService.findByDepartureStopId(neighborStopEntity.id)
-            for (neighborConnectionEntity in neighborConnectionsEntities) {
-                val neighborTimeConnectionsEntities = stopConnectionService
-                    .findTimeStopConnectionsBeginningFrom(
-                        neighborConnectionEntity.id!!, currentStopWithTime.departureTime
-                    )
-                for (neighborTimeConnectionEntity in neighborTimeConnectionsEntities) {
-                    val neighborDepartureStopEntity = neighborConnectionEntity.departureStop
-                    val neighborStopConnectionType = determineStopConnectionType(
-                        lastLineNumber, neighborConnectionEntity, isStart
-                    )
-                    val neighborConnection = createChangeOrInitialWaitingStopConnectionWithArrival(
-                        currentStopWithTime, neighborDepartureStopEntity, neighborTimeConnectionEntity,
-                        neighborStopConnectionType
-                    )
-                    result.add(neighborConnection)
-                }
-            }
-
-        }
-
-        return result
     }
 
     private fun determineStopConnectionType(
         lastLineNumber: String?, connectionEntity: StopConnectionEntity, isStart: Boolean
     ): StopConnectionType {
         return when (lastLineNumber) {
-            connectionEntity.lineNumber -> NO_CHANGE // same lineNumber
-            null -> NO_CHANGE // departure after waiting
+            connectionEntity.lineNumber -> NO_CHANGE // the same line
+            null -> NO_CHANGE // departure after waiting or walking to the stop
             else -> {
                 when (isStart) {
                     true -> INITIAL_WAITING // waiting at the beginning
-                    false -> CHANGE // waiting
+                    false -> CHANGE // departure indicating waiting or walking
                 }
             }
         }
