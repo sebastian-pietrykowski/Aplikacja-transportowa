@@ -228,9 +228,9 @@ fun main() {
         listOfStopsCase3(7) to emptyList()
     )
 
-    ShortestPathAlgorithm(
-        connections, listOfStopsCase3(0)
-    ).find("5")
+//    ShortestPathAlgorithm(
+//        connections, listOfStopsCase3(0)
+//    ).find("5")
 
     //result.forEach { (k, v) -> println("$k = $v") }
 //    ChronoUnit.MINUTES.between()

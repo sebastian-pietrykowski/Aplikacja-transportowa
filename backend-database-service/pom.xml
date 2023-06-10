@@ -98,7 +98,8 @@
                     <dependency>
                         <groupId>org.hibernate</groupId>
                         <artifactId>hibernate-core</artifactId>
-                        <version>5.2.15.Final</version>
+                        <version>6.2.0.Final</version>
+                        <type>pom</type>
                     </dependency>
 
 

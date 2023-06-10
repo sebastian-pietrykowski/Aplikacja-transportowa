@@ -1,9 +1,8 @@
 package com.example.backenddatabaseservice
 
 import com.example.backenddatabaseservice.backend.model.StopType.*
-import com.example.backenddatabaseservice.backend.model.StopWithTime
 import com.example.backenddatabaseservice.backend.service.FromStopConnectionsFinder
-import com.example.backenddatabaseservice.backend.service.ShortestPathAlgorithmSpring
+import com.example.backenddatabaseservice.backend.service.ShortestPathAlgorithm
 import com.example.backenddatabaseservice.database.entity.*
 import com.example.backenddatabaseservice.database.repository.*
 import com.example.backenddatabaseservice.database.service.StopConnectionService
@@ -11,6 +10,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import java.time.LocalTime
+
 
 @SpringBootTest
 class BackendDatabaseServiceApplicationTests {
@@ -37,14 +37,16 @@ class BackendDatabaseServiceApplicationTests {
     lateinit var connectionFinder: FromStopConnectionsFinder
 
     @Autowired
-    lateinit var shortestPathAlgorithmSpring: ShortestPathAlgorithmSpring
+    lateinit var shortestPathAlgorithm: ShortestPathAlgorithm
+
+
 
     @Test
     fun contextLoads() {
         assert(true)
     }
 
-/*
+
     @Test
     fun testRepository() {
         val locality1 = LocalityEntity("WA", "Warszawa", null)
@@ -147,23 +149,18 @@ class BackendDatabaseServiceApplicationTests {
 
         assert(true)
     }
-*/
+
+
+        @Test
+        fun test1() {
+
+            //val startStopWithTime = StopWithTime("000101", "0001", LocalTime.of(0,0), BUS)
+            shortestPathAlgorithm.find("0001", LocalTime.of(0,0), "0005")
+        }
 
     @Test
-    fun test1() {
-        //assert (stopConnectionService.findByDepartureStopId("000101").isNotEmpty())
-        //assert(stopConnectionRepository.findByDepartureStopId("000101").isNotEmpty())
-        //stopConnectionRepository.findByDepartureStopId("000101")
+    fun test2() {
+        val sourceComplexId = "0001"
 
-        val startStopWithTime = StopWithTime("000101", "0001", LocalTime.of(0,0), BUS)
-//        val connections = connectionFinder.find(startStopWithTime, true, null)
-//        println("\n------------")
-//        println(connections.size)
-//        println(connections)
-//        connections.forEach { c -> println(c.arrivalStopWithTime.stopId) }
-//        println("------------")
-//        //assert(true)
-        shortestPathAlgorithmSpring.find(startStopWithTime, "0005")
     }
-
 }

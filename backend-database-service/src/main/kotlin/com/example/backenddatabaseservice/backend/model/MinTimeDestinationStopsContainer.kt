@@ -15,9 +15,7 @@ class MinTimeDestinationStopsContainer(private val destinationComplexId: String)
     }
 
     fun getMin(): StopWithTime? {
-        //return minTimeForStops[complexId]?.first
+        if (minTimeForStops.isEmpty()) return null
         return minTimeForStops.minBy { it.value.second }.value.first
-//        stopsInComplex.mapNotNull { stopId -> minTimeForStops[stopId] }
-//            .minByOrNull { it.second }?.first
     }
 }

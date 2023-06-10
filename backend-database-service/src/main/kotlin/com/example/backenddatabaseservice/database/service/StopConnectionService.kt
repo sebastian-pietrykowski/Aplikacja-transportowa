@@ -27,12 +27,18 @@ class StopConnectionService(
         return stopConnectionRepository.findByDepartureStopId(stopId)
     }
 
-    fun findTimeStopConnections(id: Long): List<TimeStopConnectionEntity> {
-        return stopConnectionRepository.findById(id).get().timeStopConnections?.toList() ?: emptyList()
+    fun findByTimeStopConnectionId(stopConnectionId: Long): StopConnectionEntity? {
+        return stopConnectionRepository.findAll().first { sc -> sc?.timeStopConnections!!.any {
+                tsc -> tsc.id == stopConnectionId }
+        }
     }
 
-    fun findTimeStopConnectionsBeginningFrom(id: Long, currentTime: LocalTime): List<TimeStopConnectionEntity> {
-        return stopConnectionRepository.findById(id).get().timeStopConnections
+    fun findTimeStopConnections(stopConnectionId: Long): List<TimeStopConnectionEntity> {
+        return stopConnectionRepository.findById(stopConnectionId).get().timeStopConnections?.toList() ?: emptyList()
+    }
+
+    fun findTimeStopConnectionsBeginningFrom(stopConnectionId: Long, currentTime: LocalTime): List<TimeStopConnectionEntity> {
+        return stopConnectionRepository.findById(stopConnectionId).get().timeStopConnections
             ?.filter { it.departureTime == currentTime || it.departureTime.isAfter(currentTime) }
             ?.toList() ?: emptyList()
     }

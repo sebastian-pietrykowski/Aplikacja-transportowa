@@ -8,6 +8,7 @@ import com.example.backenddatabaseservice.database.entity.StopEntity
 import com.example.backenddatabaseservice.database.entity.TimeStopConnectionEntity
 import com.example.backenddatabaseservice.database.service.StopComplexService
 import org.springframework.stereotype.Service
+import java.time.LocalTime
 
 @Service
 class FromStopConnectionsFinder(
@@ -38,16 +39,11 @@ class FromStopConnectionsFinder(
         departureStopWithTime: StopWithTime, lastLineNumber: String?, isStart: Boolean
     ) {
         for (connectionEntity in connectionsEntities) {
-            val minTimeToSearch = when (
-                (departureStopWithTime.stopId == connectionEntity.departureStop.id)
-            ) {
-                true -> departureStopWithTime.departureTime
-                false -> departureStopWithTime.departureTime.plusMinutes(
-                    Constraints.MIN_TIME_FOR_CHANGE_IN_MINUTES.toLong()
-                )
-            }
+            val minDepartureTimeToSearch = determineMinDepartureTimeToSearch(
+                departureStopWithTime, connectionEntity
+            )
             val timeConnectionEntities = stopConnectionService.findTimeStopConnectionsBeginningFrom(
-                connectionEntity.id!!, minTimeToSearch
+                connectionEntity.id!!, minDepartureTimeToSearch
             )
             for (timeConnectionEntity in timeConnectionEntities) {
                 val departureStopEntity = connectionEntity.departureStop
@@ -68,6 +64,19 @@ class FromStopConnectionsFinder(
                 }
                 result.add(connection)
             }
+        }
+    }
+
+    private fun determineMinDepartureTimeToSearch(
+        departureStopWithTime: StopWithTime, connectionEntity: StopConnectionEntity
+    ): LocalTime {
+        return when (
+            (departureStopWithTime.stopId == connectionEntity.departureStop.id)
+        ) {
+            true -> departureStopWithTime.departureTime
+            false -> departureStopWithTime.departureTime.plusMinutes(
+                Constraints.MIN_TIME_FOR_CHANGE_IN_MINUTES.toLong()
+            )
         }
     }
 

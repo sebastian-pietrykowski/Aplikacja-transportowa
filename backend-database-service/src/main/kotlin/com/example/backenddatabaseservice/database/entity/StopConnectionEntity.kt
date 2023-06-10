@@ -15,7 +15,7 @@ class StopConnectionEntity(
     @Column
     val id: Long?,
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "departure_stop_id")
     val departureStop: StopEntity,
 
