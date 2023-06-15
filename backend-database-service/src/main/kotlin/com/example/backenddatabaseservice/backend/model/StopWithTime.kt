@@ -4,9 +4,9 @@ import java.time.LocalTime
 
 data class StopWithTime(
     val stopId: String, val complexId: String, val departureTime: LocalTime,
-    val direction: String, val stopType: StopType
+    val direction: String
 ) {
     constructor(
-        stopId: String, complexId: String, departureTime: LocalTime, stopType: StopType
-    ) : this(stopId, complexId, departureTime, "-", stopType)
+        stopId: String, complexId: String, departureTime: LocalTime
+    ) : this(stopId, complexId, departureTime, "-")
 }

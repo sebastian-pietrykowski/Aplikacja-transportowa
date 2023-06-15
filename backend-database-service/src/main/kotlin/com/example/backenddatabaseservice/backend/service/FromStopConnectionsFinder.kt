@@ -59,7 +59,8 @@ class FromStopConnectionsFinder(
                         connectionEntity, stopConnectionType
                     )
                     false -> createChangeOrInitialWaitingStopConnectionWithArrival(
-                        departureStopWithTime, departureStopEntity, timeConnectionEntity, stopConnectionType
+                        departureStopWithTime, departureStopEntity, timeConnectionEntity, stopConnectionType,
+                        connectionEntity
                     )
                 }
                 result.add(connection)
@@ -102,18 +103,17 @@ class FromStopConnectionsFinder(
     ): StopConnectionWithArrival {
         val departureStop = StopWithTime(
             departureStopEntity.id, departureStopEntity.stopComplex.id,
-            timeConnectionEntity.departureTime, connectionEntity.direction,
-            departureStopEntity.stopType
+            timeConnectionEntity.departureTime, connectionEntity.direction
         )
         val arrivalStop = StopWithTime(
             arrivalStopEntity.id, arrivalStopEntity.stopComplex.id,
-            timeConnectionEntity.arrivalTime, arrivalStopEntity.stopType
+            timeConnectionEntity.arrivalTime
         )
         return StopConnectionWithArrival(
             arrivalStop,
             SimpleStopConnection(
                 connectionEntity.lineNumber, stopConnectionType,
-                TimeDifferenceFinder.find(departureStop, arrivalStop)
+                TimeDifferenceFinder.find(departureStop, arrivalStop), connectionEntity.transportMode
             )
         )
     }
@@ -121,21 +121,21 @@ class FromStopConnectionsFinder(
     private fun createChangeOrInitialWaitingStopConnectionWithArrival(
         departureStopWithTime: StopWithTime, departureStopEntity: StopEntity,
         timeConnectionEntity: TimeStopConnectionEntity,
-        stopConnectionType: StopConnectionType
+        stopConnectionType: StopConnectionType, connectionEntity: StopConnectionEntity
     ): StopConnectionWithArrival {
         val departureStop = StopWithTime(
             departureStopWithTime.stopId, departureStopWithTime.complexId,
-            departureStopWithTime.departureTime, departureStopWithTime.stopType
+            departureStopWithTime.departureTime
         )
         val arrivalStop = StopWithTime(
             departureStopEntity.id, departureStopEntity.stopComplex.id,
-            timeConnectionEntity.departureTime, departureStopEntity.stopType
+            timeConnectionEntity.departureTime
         )
         return StopConnectionWithArrival(
             arrivalStop,
             SimpleStopConnection(
                 null, stopConnectionType,
-                TimeDifferenceFinder.find(departureStop, arrivalStop)
+                TimeDifferenceFinder.find(departureStop, arrivalStop), connectionEntity.transportMode
             )
         )
     }

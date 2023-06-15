@@ -8,7 +8,7 @@ class BackendDatabaseServiceApplication {
 
 }
 
-    fun main(args: Array<String>) {
-        runApplication<BackendDatabaseServiceApplication>(*args)
-    }
+fun main(args: Array<String>) {
+    runApplication<BackendDatabaseServiceApplication>(*args)
+}
 

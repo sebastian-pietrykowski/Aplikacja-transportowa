@@ -1,6 +1,5 @@
 package com.example.backenddatabaseservice.database.entity
 
-import com.example.backenddatabaseservice.backend.model.StopType
 import jakarta.persistence.*
 
 @Entity @Table(name = "stop")
@@ -14,19 +13,16 @@ class StopEntity(
     val stopComplex: StopComplexEntity,
 
     @Column
-    val stopType: StopType,
+    val xCoordinate: Double?,
 
     @Column
-    val xCoordinate: Double,
+    val yCoordinate: Double?,
 
-    @Column
-    val yCoordinate: Double,
+    @OneToMany(mappedBy = "departureStop", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
+    val departureConnections: Set<StopConnectionEntity>? = mutableSetOf(),
 
-    @OneToMany(mappedBy = "departureStop", fetch = FetchType.LAZY)
-    val departureConnections: Set<StopConnectionEntity> = mutableSetOf(),
-
-    @OneToMany(mappedBy = "arrivalStop")
-    val arrivalConnections: Set<StopConnectionEntity> = mutableSetOf()
+    @OneToMany(mappedBy = "arrivalStop", cascade = [CascadeType.REMOVE], orphanRemoval = true)
+    val arrivalConnections: Set<StopConnectionEntity>? = mutableSetOf()
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

@@ -14,8 +14,7 @@ import kotlin.collections.HashSet
 class ShortestPathAlgorithm(
     private val connectionsFinder: FromStopConnectionsFinder,
     private val stopConnectionService: StopConnectionService,
-    private val stopComplexService: StopComplexService,
-    private val stopService: StopService
+    private val stopComplexService: StopComplexService
 ) {
     private val visited = HashSet<StopWithTime>()
     private val predecessors = HashMap<StopWithTime, StopConnectionWithDeparture?>() // arrivalStop, connectionToIt
@@ -23,9 +22,9 @@ class ShortestPathAlgorithm(
     private val queue = PriorityQueue<Pair<StopWithTime, Int>>(
         compareBy({ it.second }, { it.first.departureTime })
     ) // arrivalStop, timeDifferenceWithPenalty
-    private val path = mutableListOf<StopConnectionWithArrival>()
+    private val path = mutableListOf<StopConnectionWithDeparture>()
     private var minTimeDestinationStopsContainer: MinTimeDestinationStopsContainer? =
-        null // only for stops with destinationId
+        null // only for stops with destinationComplexId
 
     private fun initializeValues(destinationComplexId: String) {
         visited.clear()
@@ -37,9 +36,7 @@ class ShortestPathAlgorithm(
     }
 
     private fun findShortestConnections(
-        sourceComplexId: String,
-        departureTime: LocalTime,
-        destinationComplexId: String
+        sourceComplexId: String, departureTime: LocalTime, destinationComplexId: String
     ) {
         addStartStops(sourceComplexId, departureTime)
 
@@ -75,13 +72,13 @@ class ShortestPathAlgorithm(
         for (stopConnectionId in stopConnectionIdsDepartingFromStopComplex) {
             val timeStopConnectionsFromSource = stopConnectionService
                 .findTimeStopConnectionsBeginningFrom(
-                stopConnectionId, departureTime
-            )
+                    stopConnectionId, departureTime
+                )
             for (timeStopConnection in timeStopConnectionsFromSource) {
                 val sourceStop = stopConnectionService.findByTimeStopConnectionId(timeStopConnection.id!!)
                 val sourceStopWithTime = StopWithTime(
                     sourceStop!!.departureStop.id, sourceComplexId, timeStopConnection.departureTime,
-                    sourceStop.direction, StopType.BUS
+                    sourceStop.direction
                 )
                 queue.add(sourceStopWithTime to 0)
                 totalTimeWithPenalty[sourceStopWithTime] = 0
@@ -94,7 +91,7 @@ class ShortestPathAlgorithm(
         var currentSimpleConnection: SimpleStopConnection? = null
         while (currentStopWithTime != null) {
             val predecessor = predecessors[currentStopWithTime]
-            val currentConnection = StopConnectionWithArrival(currentStopWithTime, currentSimpleConnection)
+            val currentConnection = StopConnectionWithDeparture(currentStopWithTime, currentSimpleConnection)
             path.add(currentConnection)
             currentStopWithTime = predecessor?.departureStopWithTime
             currentSimpleConnection = predecessor?.simpleConnection
@@ -106,17 +103,16 @@ class ShortestPathAlgorithm(
         return minTimeDestinationStopsContainer!!.getMin()
     }
 
-
     fun find(
         sourceComplexId: String,
         departureTime: LocalTime,
         destinationComplexId: String
-    ): List<StopConnectionWithArrival> {
+    ): List<StopConnectionWithDeparture> {
         initializeValues(destinationComplexId)
         findShortestConnections(sourceComplexId, departureTime, destinationComplexId)
         val destinationStop = findNearestDestinationStop() ?: return emptyList()
         findPath(destinationStop!!)
-
+/*
         println("Final destination: $destinationStop")
         println("\nPredecessors:")
         predecessors.forEach { (k, v) -> println("$k = $v") }
@@ -124,7 +120,7 @@ class ShortestPathAlgorithm(
         totalTimeWithPenalty.forEach { (k, v) -> println("$k = $v") }
         println("\nPath:")
         path.forEach { (k, v) -> println("$k = $v") }
-
+*/
         return path
     }
 }

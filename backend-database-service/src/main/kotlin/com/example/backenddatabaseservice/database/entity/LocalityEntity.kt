@@ -5,13 +5,13 @@ import jakarta.persistence.*
 @Entity @Table(name = "locality")
 class LocalityEntity(
     @Id
-    @Column
+    @Column //(columnDefinition = "VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci")
     val symbol: String,
 
     @Column
     val name: String,
 
-    @OneToMany(mappedBy = "locality")
+    @OneToMany(mappedBy = "locality", cascade = [CascadeType.REMOVE])
     val stopComplexes: Set<StopComplexEntity>? = mutableSetOf()
 ) {
     override fun equals(other: Any?): Boolean {

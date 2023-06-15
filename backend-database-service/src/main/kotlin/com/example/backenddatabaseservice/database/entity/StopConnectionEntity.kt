@@ -1,8 +1,8 @@
 package com.example.backenddatabaseservice.database.entity
 
+import com.example.backenddatabaseservice.backend.model.TransportMode
 import java.time.LocalTime
 import jakarta.persistence.*
-import java.util.Objects
 
 @Entity
 @Table(
@@ -20,7 +20,10 @@ class StopConnectionEntity(
     val departureStop: StopEntity,
 
     @Column(name = "line_number")
-    var lineNumber: String,
+    var lineNumber: String?,
+
+    @Column
+    val transportMode: TransportMode?,
 
     @Column(name = "direction")
     val direction: String,
@@ -30,12 +33,12 @@ class StopConnectionEntity(
     val arrivalStop: StopEntity,
 
     @Column
-    val minTransitTime: LocalTime,
+    val minTransitTime: LocalTime?,
 
     @Column
-    val maxTransitTime: LocalTime,
+    val maxTransitTime: LocalTime?,
 
-    @OneToMany(mappedBy = "stopConnection", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "stopConnection", fetch = FetchType.EAGER, cascade = [CascadeType.REMOVE])
     val timeStopConnections: Set<TimeStopConnectionEntity>? = mutableSetOf()
 ) {
     override fun equals(other: Any?): Boolean {
@@ -47,7 +50,6 @@ class StopConnectionEntity(
     }
 
     override fun hashCode(): Int {
-        //return Objects.hash(departureStop, lineNumber, direction, arrivalStop)
         return departureStop.hashCode() + lineNumber.hashCode() + direction.hashCode() + arrivalStop.hashCode()
     }
 }

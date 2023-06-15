@@ -4,8 +4,7 @@ import com.example.backenddatabaseservice.backend.model.SimpleStopConnection
 import com.example.backenddatabaseservice.backend.model.StopWithTime
 import com.example.backenddatabaseservice.backend.model.StopConnectionType.*
 import com.example.backenddatabaseservice.backend.model.StopConnectionWithArrival
-import com.example.backenddatabaseservice.backend.model.StopType.*
-import com.example.backenddatabaseservice.backend.service.ShortestPathAlgorithm
+import com.example.backenddatabaseservice.backend.model.TransportMode.*
 import com.example.backenddatabaseservice.backend.service.TimeDifferenceFinder
 import java.time.LocalTime
 
@@ -14,40 +13,40 @@ class MainForTests
 
 fun listOfStopsCase1(nr: Int): StopWithTime {
     return when (nr) {
-        0 -> StopWithTime("1.1", "1", LocalTime.of(0, 0), "a", BUS)
-        1 -> StopWithTime("2.1", "2", LocalTime.of(0, 1), "a", BUS)
-        2 -> StopWithTime("2.1", "2", LocalTime.of(0, 2), "a", BUS)
-        3 -> StopWithTime("6.1", "6", LocalTime.of(0, 3), "a", BUS)
-        4 -> StopWithTime("3.1", "3", LocalTime.of(0, 2), "a", BUS)
-        5 -> StopWithTime("4.1", "4", LocalTime.of(0, 3), "a", BUS)
-        6 -> StopWithTime("3.1", "3", LocalTime.of(0, 3), "a", BUS)
-        7 -> StopWithTime("5.1", "5", LocalTime.of(0, 4), "a", BUS)
-        else -> StopWithTime("-100.1", "-100", LocalTime.of(0, 0), "a", BUS)
+        0 -> StopWithTime("1.1", "1", LocalTime.of(0, 0), "a")
+        1 -> StopWithTime("2.1", "2", LocalTime.of(0, 1), "a")
+        2 -> StopWithTime("2.1", "2", LocalTime.of(0, 2), "a",)
+        3 -> StopWithTime("6.1", "6", LocalTime.of(0, 3), "a")
+        4 -> StopWithTime("3.1", "3", LocalTime.of(0, 2), "a")
+        5 -> StopWithTime("4.1", "4", LocalTime.of(0, 3), "a")
+        6 -> StopWithTime("3.1", "3", LocalTime.of(0, 3), "a")
+        7 -> StopWithTime("5.1", "5", LocalTime.of(0, 4), "a",)
+        else -> StopWithTime("-100.1", "-100", LocalTime.of(0, 0), "a")
     }
 }
 
 fun listOfStopsCase2(nr: Int): StopWithTime {
     return when (nr) {
-        0 -> StopWithTime("1.1", "1", LocalTime.of(0, 0), "a", BUS)
-        1 -> StopWithTime("2.1", "2", LocalTime.of(0, 2), "a", BUS)
-        2 -> StopWithTime("2.1", "2", LocalTime.of(0, 5), "a", BUS)
-        3 -> StopWithTime("3.1", "3", LocalTime.of(0, 6), "a", BUS)
-        4 -> StopWithTime("2.1", "2", LocalTime.of(0,4), "a", BUS)
-        else -> StopWithTime("-100.1", "100", LocalTime.of(0, 0), "a", BUS)
+        0 -> StopWithTime("1.1", "1", LocalTime.of(0, 0), "a")
+        1 -> StopWithTime("2.1", "2", LocalTime.of(0, 2), "a")
+        2 -> StopWithTime("2.1", "2", LocalTime.of(0, 5), "a")
+        3 -> StopWithTime("3.1", "3", LocalTime.of(0, 6), "a")
+        4 -> StopWithTime("2.1", "2", LocalTime.of(0,4), "a")
+        else -> StopWithTime("-100.1", "100", LocalTime.of(0, 0), "a",)
     }
 }
 
 fun listOfStopsCase3(nr: Int): StopWithTime {
     return when (nr) {
-        0 -> StopWithTime("1.1", "1", LocalTime.of(0, 0), "a", BUS)
-        1 -> StopWithTime("3.1", "3", LocalTime.of(0, 2), "a", BUS)
-        2 -> StopWithTime("3.1", "3", LocalTime.of(0, 3), "a", BUS)
-        3 -> StopWithTime("4.1", "4", LocalTime.of(0, 5), "a", BUS)
-        4 -> StopWithTime("4.1", "4", LocalTime.of(0,6), "a", BUS)
-        5 -> StopWithTime("5.1", "5", LocalTime.of(0,7), "a", BUS)
-        6 -> StopWithTime("2.1", "2", LocalTime.of(0,4), "a", BUS)
-        7 -> StopWithTime("5.1", "5", LocalTime.of(0,9), "a", BUS)
-        else -> StopWithTime("-100.1", "-100", LocalTime.of(0, 0), "a", BUS)
+        0 -> StopWithTime("1.1", "1", LocalTime.of(0, 0), "a")
+        1 -> StopWithTime("3.1", "3", LocalTime.of(0, 2), "a")
+        2 -> StopWithTime("3.1", "3", LocalTime.of(0, 3), "a")
+        3 -> StopWithTime("4.1", "4", LocalTime.of(0, 5), "a")
+        4 -> StopWithTime("4.1", "4", LocalTime.of(0,6), "a")
+        5 -> StopWithTime("5.1", "5", LocalTime.of(0,7), "a")
+        6 -> StopWithTime("2.1", "2", LocalTime.of(0,4), "a")
+        7 -> StopWithTime("5.1", "5", LocalTime.of(0,9), "a")
+        else -> StopWithTime("-100.1", "-100", LocalTime.of(0, 0), "a")
     }
 }
 
@@ -174,13 +173,13 @@ fun main() {
             StopConnectionWithArrival(
                 listOfStopsCase3(1), SimpleStopConnection(
                     "1", NO_CHANGE,
-                    TimeDifferenceFinder.find(listOfStopsCase3(0), listOfStopsCase3(1))
+                    TimeDifferenceFinder.find(listOfStopsCase3(0), listOfStopsCase3(1)), BUS
                 )
             ),
             StopConnectionWithArrival(
                 listOfStopsCase3(6), SimpleStopConnection(
                     "4", NO_CHANGE,
-                    TimeDifferenceFinder.find(listOfStopsCase3(0), listOfStopsCase3(6))
+                    TimeDifferenceFinder.find(listOfStopsCase3(0), listOfStopsCase3(6)), BUS
                 )
             )
         ),
@@ -188,7 +187,7 @@ fun main() {
             StopConnectionWithArrival(
                 listOfStopsCase3(2), SimpleStopConnection(
                     CHANGE,
-                    TimeDifferenceFinder.find(listOfStopsCase3(1), listOfStopsCase3(2))
+                    TimeDifferenceFinder.find(listOfStopsCase3(1), listOfStopsCase3(2)), BUS
                 )
             )
         ),
@@ -196,7 +195,7 @@ fun main() {
             StopConnectionWithArrival(
                 listOfStopsCase3(3), SimpleStopConnection(
                     "2", NO_CHANGE,
-                    TimeDifferenceFinder.find(listOfStopsCase3(2), listOfStopsCase3(3))
+                    TimeDifferenceFinder.find(listOfStopsCase3(2), listOfStopsCase3(3)), BUS
                 )
             )
         ),
@@ -204,7 +203,7 @@ fun main() {
             StopConnectionWithArrival(
                 listOfStopsCase3(4), SimpleStopConnection(
                     CHANGE,
-                    TimeDifferenceFinder.find(listOfStopsCase3(3), listOfStopsCase3(4))
+                    TimeDifferenceFinder.find(listOfStopsCase3(3), listOfStopsCase3(4)), BUS
                 )
             )
         ),
@@ -212,7 +211,7 @@ fun main() {
             StopConnectionWithArrival(
                 listOfStopsCase3(5), SimpleStopConnection(
                     "3", NO_CHANGE,
-                    TimeDifferenceFinder.find(listOfStopsCase3(4), listOfStopsCase3(5))
+                    TimeDifferenceFinder.find(listOfStopsCase3(4), listOfStopsCase3(5)), BUS
                 )
             )
         ),
@@ -221,7 +220,7 @@ fun main() {
             StopConnectionWithArrival(
                 listOfStopsCase3(7), SimpleStopConnection(
                     "4", NO_CHANGE,
-                    TimeDifferenceFinder.find(listOfStopsCase3(6), listOfStopsCase3(7))
+                    TimeDifferenceFinder.find(listOfStopsCase3(6), listOfStopsCase3(7)), BUS
                 )
             )
         ),

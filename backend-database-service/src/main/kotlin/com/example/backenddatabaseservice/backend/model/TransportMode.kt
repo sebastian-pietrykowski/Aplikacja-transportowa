@@ -1,5 +1,5 @@
 package com.example.backenddatabaseservice.backend.model
 
-enum class StopType {
+enum class TransportMode {
     BUS, TRAM, SUBWAY
 }

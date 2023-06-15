@@ -1,6 +1,5 @@
 package com.example.backenddatabaseservice.database.service
 
-import com.example.backenddatabaseservice.database.entity.StopConnectionEntity
 import com.example.backenddatabaseservice.database.entity.StopEntity
 import com.example.backenddatabaseservice.database.repository.StopComplexRepository
 import jakarta.persistence.EntityManager
