@@ -1,4 +1,4 @@
 backend-database-service/src/main/resources/RA230225-2.TXT filter=lfs diff=lfs merge=lfs -text
+*.txt filter=lfs diff=lfs merge=lfs -text
 backend-database-service/src/main/resources/RA230225-2.TXT !text !filter !merge !diff
 *.csv filter=lfs diff=lfs merge=lfs -text
-*.txt filter=lfs diff=lfs merge=lfs -text
